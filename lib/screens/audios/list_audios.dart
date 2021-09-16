@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:audiov/audio_player/audio_player_mini.dart';
+
+import '../../audio_player/player.dart';
+
 import '../../controllers/audio_controller.dart';
-import '../../media_player/media_player_mini.dart';
 import '../../widget_utils/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,7 +54,7 @@ class _ListAudiosState extends State<ListAudios> {
         elevation: 0.0,
         title: Text(
           'My Audios',
-          style: Theme.of(context).primaryTextTheme.headline1,
+          style: Theme.of(context).textTheme.headline1,
         ),
         actions: [
           IconButton(
@@ -81,7 +84,7 @@ class _ListAudiosState extends State<ListAudios> {
                         return AudioThumbnail(audioFile: _audios[index]);
                       },
                     ),
-                    MediaPlayerMini(),
+                    AudioPlayerMini()
                   ],
                 )
               : Center(

@@ -16,16 +16,26 @@ abstract class AudioAbstract {
   Future<bool> resumeAudio();
 }
 
-enum AudioState { stop, playing, pause }
+enum AudioState { stop, playing, pause, finished }
+enum PlayerType { mini, max, none }
 
 class AudioController extends GetxController implements AudioAbstract {
   late AudioPlayer _audioPlayer;
-  AudioData? playingAudioData;
+  PlayerType _playerType = PlayerType.none;
+  PlayerType get playerType => _playerType;
+  AudioData? _playingAudio;
+  AudioData? get playingAudio => _playingAudio;
   AudioState _audioState = AudioState.stop;
   AudioState get audioState => _audioState;
+
   AudioController() {
     _audioPlayer = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
+    _audioPlayer.onPlayerCompletion.listen((event) {
+      _audioState = AudioState.finished;
+      update(["music-player", _playingAudio!.path], true);
+    });
   }
+
   Future<bool> _hasPermission() async {
     var status = await Permission.storage.status;
     while (status.isDenied) {
@@ -68,20 +78,20 @@ class AudioController extends GetxController implements AudioAbstract {
 
   Future<bool> playAudio(AudioData data) async {
     int result = await _audioPlayer.play(data.path, isLocal: true);
-
+    if (_playerType == PlayerType.none) _playerType = PlayerType.max;
     if (result == 1) {
       _audioState = AudioState.playing;
-      if (playingAudioData == null)
+      if (_playingAudio == null)
         update([
           "music-player",
           data.path,
         ], true);
       else {
-        AudioData temp = playingAudioData!;
-        playingAudioData = data;
-        update(["music-player", playingAudioData!.path, temp.path], true);
+        AudioData temp = _playingAudio!;
+        _playingAudio = data;
+        update(["music-player", _playingAudio!.path, temp.path], true);
       }
-      playingAudioData = data;
+      _playingAudio = data;
 
       return true;
     }
@@ -94,8 +104,8 @@ class AudioController extends GetxController implements AudioAbstract {
     if (result == 1) {
       _audioState = AudioState.stop;
 
-      update(["music-player", playingAudioData!.path], true);
-      playingAudioData = null;
+      update(["music-player", _playingAudio!.path], true);
+      _playingAudio = null;
       return true;
     }
     return false;
@@ -107,7 +117,7 @@ class AudioController extends GetxController implements AudioAbstract {
     if (result == 1) {
       _audioState = AudioState.pause;
 
-      update(["music-player", playingAudioData!.path], true);
+      update(["music-player", _playingAudio!.path], true);
       return true;
     }
     return false;
@@ -119,9 +129,16 @@ class AudioController extends GetxController implements AudioAbstract {
     if (result == 1) {
       _audioState = AudioState.playing;
 
-      update(["music-player", playingAudioData!.path], true);
+      update(["music-player", _playingAudio!.path], true);
       return true;
     }
     return false;
   }
+
+  void changePlayerType(PlayerType type) {
+    _playerType = type;
+    update(["music-player"], true);
+  }
+
+  Stream<Duration> onDurationChanged() => _audioPlayer.onAudioPositionChanged;
 }
