@@ -1,3 +1,4 @@
+import 'package:audiov/abstracts/audio_abstract.dart';
 import 'package:audiov/constants/constants.dart';
 import 'package:audiov/controllers/audio_controller.dart';
 import 'package:audiov/tools/human_readable_values.dart';

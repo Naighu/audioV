@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:audiov/abstracts/audio_abstract.dart';
 import 'package:audiov/audio_player/audio_player_max.dart';
 import 'package:audiov/constants/constants.dart';
 import 'package:audiov/controllers/audio_controller.dart';

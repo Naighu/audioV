@@ -31,9 +31,10 @@ dependencies:
   get: ^4.3.8
   iconsax: ^0.0.8
   lottie: ^1.1.0
-  permission_handler: ^8.1.6
-  youtube_explode_dart: ^1.10.6
   palette_generator: ^0.3.1
+  permission_handler: ^8.1.6
+  path_provider: ^2.0.4
+  youtube_explode_dart: ^1.10.6
 
 dev_dependencies:
   flutter_test:

@@ -1,15 +1,15 @@
 import 'dart:io';
 
+import 'package:audiov/abstracts/audio_abstract.dart';
 import 'package:audiov/controllers/audio_controller.dart';
+import 'package:audiov/tools/get_metadata.dart';
 import 'package:audiov/tools/human_readable_values.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import '../../models/audio_data.dart';
 import '../../constants/constants.dart';
-import '../../main.dart';
 import 'package:flutter/material.dart';
 
 class AudioThumbnail extends StatelessWidget {
@@ -19,15 +19,18 @@ class AudioThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<AudioData>(
-      future: Get.find<AudioController>().getMetaData(File(audioFile.path)),
+      future: getMetaData(File(audioFile.path)),
       builder: (_, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Text("Getting meta data");
-        AudioData audioData = snapshot.data!;
-        ;
         return GetBuilder<AudioController>(
-            id: snapshot.data!.path,
+            id: audioFile.path,
             builder: (audioController) {
+              AudioData audioData = snapshot.data ??
+                  AudioData(
+                      trackName: "",
+                      path: "",
+                      duration: 0,
+                      size: 0,
+                      bitrate: 0);
               bool isPlaying =
                   AudioState.playing == audioController.audioState &&
                       audioData.path == audioController.playingAudio!.path;
