@@ -6,68 +6,74 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 class AudioPlayerControls extends StatelessWidget {
-  const AudioPlayerControls({Key? key}) : super(key: key);
+  final Duration currentDuartion;
+  AudioPlayerControls({Key? key, required this.currentDuartion})
+      : super(key: key);
+  final AudioController _audioController = Get.find<AudioController>();
+  final playerWidth = (Get.width - (defaultPadding * 2));
 
   @override
   Widget build(BuildContext context) {
-    AudioController _audioController = Get.find<AudioController>();
-    final playerWidth =
-        (MediaQuery.of(context).size.width - (defaultPadding * 2));
+    double pos = 0.0;
     return Column(
       children: [
         StreamBuilder<Duration>(
             stream: _audioController.onDurationChanged(),
             builder: (context, snapshot) {
-              Duration duration = snapshot.data ?? Duration.zero;
-              double pos = (duration.inMilliseconds /
+              Duration duration = snapshot.data ?? currentDuartion;
+
+              pos = (duration.inMilliseconds /
                       _audioController.playingAudio!.duration) *
-                  (playerWidth - 9);
-              return Column(
-                children: [
-                  ConstrainedBox(
-                    constraints:
-                        BoxConstraints(maxHeight: 12.0, maxWidth: playerWidth),
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: 3,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            height: 3,
-                            width: pos,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Positioned(
-                          left: pos,
-                          child: Container(
-                            height: 12,
-                            width: 12,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle, color: Colors.black),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  (playerWidth - 10);
+              return GestureDetector(
+                  onHorizontalDragUpdate: _onHorizontalDragUpdate,
+                  child: Column(
                     children: [
-                      Text(getHumanReadableDuration(duration)),
-                      Text(getHumanReadableDuration(Duration(
-                          milliseconds:
-                              _audioController.playingAudio!.duration)))
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxHeight: 12.0, maxWidth: playerWidth),
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                height: 3,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                height: 3,
+                                width: pos,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Positioned(
+                              left: pos,
+                              child: Container(
+                                height: 12,
+                                width: 12,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(getHumanReadableDuration(duration)),
+                          Text(getHumanReadableDuration(Duration(
+                              milliseconds:
+                                  _audioController.playingAudio!.duration)))
+                        ],
+                      )
                     ],
-                  )
-                ],
-              );
+                  ));
             }),
 
         //controllers
@@ -110,5 +116,15 @@ class AudioPlayerControls extends StatelessWidget {
             })
       ],
     );
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    double dx = details.globalPosition.dx;
+
+    int milli =
+        ((dx / (playerWidth - 10)) * _audioController.playingAudio!.duration)
+            .toInt();
+
+    _audioController.seekAudio(Duration(milliseconds: milli - 10));
   }
 }

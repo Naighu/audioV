@@ -1,9 +1,7 @@
 import 'package:audiov/constants/themes.dart';
 import 'package:audiov/screens/audios/list_audios.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
-GetIt locator = GetIt.instance;
 void main() async {
 //   locator.registerLazySingletonAsync<AudioManager>(
 //       () => AudioService.init<AudioManager>(

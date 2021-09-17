@@ -1,11 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:audiov/constants/constants.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/audio_data.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 abstract class AudioAbstract {
   Future<AudioData> getMetaData(File audioFile);
@@ -14,6 +20,7 @@ abstract class AudioAbstract {
   Future<bool> stopAudio();
   Future<bool> pauseAudio();
   Future<bool> resumeAudio();
+  Future<bool> seekAudio(Duration duration);
 }
 
 enum AudioState { stop, playing, pause, finished }
@@ -22,6 +29,7 @@ enum PlayerType { mini, max, none }
 class AudioController extends GetxController implements AudioAbstract {
   late AudioPlayer _audioPlayer;
   PlayerType _playerType = PlayerType.none;
+  Color? audioBg;
   PlayerType get playerType => _playerType;
   AudioData? _playingAudio;
   AudioData? get playingAudio => _playingAudio;
@@ -62,22 +70,45 @@ class AudioController extends GetxController implements AudioAbstract {
     return _songs;
   }
 
+// Calculate dominant color from ImageProvider
+  Future<Color> getImagePalette(ImageProvider imageProvider) async {
+    final PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(imageProvider);
+    PaletteColor? color = Get.isDarkMode
+        ? paletteGenerator.darkVibrantColor
+        : paletteGenerator.lightVibrantColor;
+    return color != null
+        ? paletteGenerator.lightMutedColor!.color
+        : Colors.white;
+  }
+
   @override
   Future<AudioData> getMetaData(File audioFile) async {
     var metadata = await MetadataRetriever.fromFile(audioFile);
-
+    Uint8List? thumbnail = metadata.albumArt;
+    if (metadata.albumArt != null) {
+      try {
+        await decodeImageFromList(metadata.albumArt!);
+        thumbnail = metadata.albumArt;
+      } catch (e) {
+        thumbnail = null;
+      }
+    }
     return AudioData(
         path: audioFile.path,
         bitrate: metadata.bitrate ?? 0,
         trackName:
             metadata.trackName ?? audioFile.path.split("/").last.split(".")[0],
         size: await audioFile.length(),
-        thumbnail: metadata.albumArt,
+        thumbnail: thumbnail,
         duration: metadata.trackDuration ?? 0);
   }
 
   Future<bool> playAudio(AudioData data) async {
     int result = await _audioPlayer.play(data.path, isLocal: true);
+
+    audioBg = await getImagePalette(Image.memory(data.thumbnail!).image);
+
     if (_playerType == PlayerType.none) _playerType = PlayerType.max;
     if (result == 1) {
       _audioState = AudioState.playing;
@@ -106,6 +137,7 @@ class AudioController extends GetxController implements AudioAbstract {
 
       update(["music-player", _playingAudio!.path], true);
       _playingAudio = null;
+      audioBg = null;
       return true;
     }
     return false;
@@ -129,6 +161,16 @@ class AudioController extends GetxController implements AudioAbstract {
     if (result == 1) {
       _audioState = AudioState.playing;
 
+      update(["music-player", _playingAudio!.path], true);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> seekAudio(Duration duration) async {
+    int result = await _audioPlayer.seek(duration);
+
+    if (result == 1) {
       update(["music-player", _playingAudio!.path], true);
       return true;
     }

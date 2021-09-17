@@ -7,15 +7,18 @@ import 'package:get/get.dart';
 import 'player.dart';
 
 class AudioPlayerMax extends StatelessWidget {
+  final Duration currentDuartion;
   const AudioPlayerMax({
     Key? key,
+    this.currentDuartion = Duration.zero,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Get.find<AudioController>().audioBg,
       appBar: AppBar(
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Get.find<AudioController>().audioBg,
           elevation: 0.0,
           leading: IconButton(
               onPressed: () {
@@ -41,15 +44,19 @@ class AudioPlayerMax extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: defaultPadding),
                     child: AspectRatio(
                       aspectRatio: 16 / 16,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: audio.thumbnail == null
-                                  ? Image.asset("$audioDir/thumbnail.jpg").image
-                                  : Image.memory(audio.thumbnail!).image,
-                              fit: BoxFit.cover),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(radius)),
+                      child: Hero(
+                        tag: "thumbnail",
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: audio.thumbnail == null
+                                    ? Image.asset("$audioDir/thumbnail.jpg")
+                                        .image
+                                    : Image.memory(audio.thumbnail!).image,
+                                fit: BoxFit.cover),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(radius)),
+                          ),
                         ),
                       ),
                     ),
@@ -64,7 +71,9 @@ class AudioPlayerMax extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline2,
                     ),
                   ),
-                  AudioPlayerControls()
+                  AudioPlayerControls(
+                    currentDuartion: currentDuartion,
+                  )
                 ],
               );
             }),

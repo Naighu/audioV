@@ -4,6 +4,7 @@ import 'package:audiov/controllers/audio_controller.dart';
 import 'package:audiov/tools/human_readable_values.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import '../../models/audio_data.dart';
@@ -23,7 +24,7 @@ class AudioThumbnail extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting)
           return Text("Getting meta data");
         AudioData audioData = snapshot.data!;
-        print("data is not null");
+        ;
         return GetBuilder<AudioController>(
             id: snapshot.data!.path,
             builder: (audioController) {
@@ -64,6 +65,17 @@ class AudioThumbnail extends StatelessWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        Visibility(
+                          visible: audioController.audioState ==
+                                  AudioState.playing &&
+                              audioController.playingAudio?.path ==
+                                  audioFile.path,
+                          child: Lottie.asset(
+                              "$animationDir/music_playing_light.json",
+                              height: 30,
+                              width: 30,
+                              repeat: true),
+                        ),
                         Text(getHumanReadableDuration(
                             Duration(milliseconds: audioData.duration))),
                         Icon(
