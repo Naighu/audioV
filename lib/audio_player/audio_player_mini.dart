@@ -99,9 +99,11 @@ class AudioPlayerMini extends StatelessWidget {
                                     color: Theme.of(context).iconTheme.color,
                                   )),
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    audioController.stopAudio();
+                                  },
                                   icon: Icon(
-                                    Iconsax.next,
+                                    Iconsax.close_circle,
                                     color: Theme.of(context).iconTheme.color,
                                   ))
                             ],

@@ -37,12 +37,6 @@ class AudioThumbnail extends StatelessWidget {
               return SizedBox(
                 height: 80.0,
                 child: ListTile(
-                    onTap: () {
-                      if (isPlaying)
-                        audioController.stopAudio();
-                      else
-                        audioController.playAudio(snapshot.data!);
-                    },
                     leading: Container(
                       height: 80,
                       width: 70,
@@ -81,10 +75,17 @@ class AudioThumbnail extends StatelessWidget {
                         ),
                         Text(getHumanReadableDuration(
                             Duration(milliseconds: audioData.duration))),
-                        Icon(
-                          isPlaying ? Iconsax.pause : Iconsax.play,
-                          color: Theme.of(context).iconTheme.color,
-                        )
+                        IconButton(
+                            onPressed: () {
+                              if (isPlaying)
+                                audioController.stopAudio();
+                              else
+                                audioController.playAudio(snapshot.data!);
+                            },
+                            icon: Icon(
+                              isPlaying ? Iconsax.pause : Iconsax.play,
+                              color: Theme.of(context).iconTheme.color,
+                            ))
                       ],
                     )),
               );

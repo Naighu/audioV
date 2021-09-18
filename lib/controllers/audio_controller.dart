@@ -11,7 +11,7 @@ import '../models/audio_data.dart';
 class AudioController extends GetxController implements AudioAbstract {
   late AudioPlayer _audioPlayer;
   PlayerType _playerType = PlayerType.none;
-  late List<FileSystemEntity> audios;
+
   Color? audioBg;
   PlayerType get playerType => _playerType;
   AudioData? _playingAudio;

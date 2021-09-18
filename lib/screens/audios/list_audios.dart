@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:audiov/audio_player/audio_player_mini.dart';
 import 'package:audiov/constants/constants.dart';
 import 'package:audiov/tools/get_files.dart';
@@ -25,32 +23,52 @@ class ListAudios extends StatefulWidget {
 class _ListAudiosState extends State<ListAudios> {
   bool _initilized = false;
 
-  late AudioController _audioController;
+  late ScrollController _scrollController;
+  final audioFiles = MediaFiles(10, [".mp3", ".wav", ".aav", ".ogg"]);
+  // StreamController<FileSystemEntity>? _controller;
 
   @override
   void initState() {
     super.initState();
     debugPrint("fetching");
-    _audioController = Get.put(AudioController());
-    _fetchAudio();
-  }
+    _scrollController = ScrollController();
+    Get.put(AudioController());
 
-  void _fetchAudio() async {
-    if (await androidPermission(Permission.storage)) {
-      try {
-        ReceivePort receivePort = ReceivePort();
-
-        await Isolate.spawn(getAudios, receivePort.sendPort);
-        receivePort.listen((message) {
-          if (message is List)
-            setState(() {
-              _initilized = true;
-              _audioController.audios = message as List<FileSystemEntity>;
-            });
+    _listenScroll();
+    androidPermission(Permission.storage).then((value) {
+      if (value)
+        setState(() {
+          _initilized = true;
+          audioFiles.fetchAudio();
         });
-      } catch (_) {}
-    } else {}
+    });
   }
+
+  void _listenScroll() {
+    _scrollController.addListener(() {
+      ScrollPosition position = _scrollController.position;
+
+      if (position.pixels == position.maxScrollExtent)
+        audioFiles.subscription.resume();
+      ;
+    });
+  }
+  // void _fetchAudio() async {
+  //   if (await androidPermission(Permission.storage)) {
+  //     try {
+  //       ReceivePort receivePort = ReceivePort();
+
+  //       await Isolate.spawn(getAudios, receivePort.sendPort);
+  //       receivePort.listen((message) {
+  //         if (message is List)
+  //           setState(() {
+  //             _initilized = true;
+  //             _audioController.audios = message as List<FileSystemEntity>;
+  //           });
+  //       });
+  //     } catch (_) {}
+  //   } else {}
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -80,34 +98,43 @@ class _ListAudiosState extends State<ListAudios> {
       body: _initilized
           ? Stack(
               children: [
-                ListView.builder(
-                  itemCount: _audioController.audios.length,
-                  itemBuilder: (_, index) {
-                    return AudioThumbnail(
-                        audioFile: _audioController.audios[index]);
-                  },
-                ),
+                StreamBuilder<List<FileSystemEntity>>(
+                    stream: audioFiles.controller.stream,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return _loading();
+
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (_, index) {
+                          return AudioThumbnail(
+                              audioFile: snapshot.data![index]);
+                        },
+                      );
+                    }),
                 AudioPlayerMini()
               ],
             )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                      Get.isDarkMode
-                          ? "$animationDir/audio_loading_dark.json"
-                          : "$animationDir/audio_loading.json",
-                      height: 130,
-                      width: 130,
-                      repeat: true),
-                  Text("Please wait a moment ",
-                      style: Theme.of(context).textTheme.subtitle1),
-                ],
-              ),
-            ),
+          : _loading(),
       bottomNavigationBar: AppNavbar(page: "audios"),
     );
   }
+
+  Widget _loading() => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+                Get.isDarkMode
+                    ? "$animationDir/audio_loading_dark.json"
+                    : "$animationDir/audio_loading.json",
+                height: 130,
+                width: 130,
+                repeat: true),
+            Text("Please wait a moment ",
+                style: Theme.of(context).textTheme.subtitle1),
+          ],
+        ),
+      );
 }
