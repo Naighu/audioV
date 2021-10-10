@@ -1,5 +1,6 @@
 import 'package:audiov/audio_player/audio_player_mini.dart';
 import 'package:audiov/constants/constants.dart';
+import 'package:audiov/screens/search_media/search_media_layout.dart';
 import 'package:audiov/tools/get_files.dart';
 import 'package:audiov/tools/permissions.dart';
 import 'package:lottie/lottie.dart';
@@ -24,7 +25,7 @@ class _ListAudiosState extends State<ListAudios> {
   bool _initilized = false;
 
   late ScrollController _scrollController;
-  final audioFiles = MediaFiles(10, [".mp3", ".wav", ".aav", ".ogg"]);
+  final audioFiles = MediaFiles(10, [".mp3"]);
   // StreamController<FileSystemEntity>? _controller;
 
   @override
@@ -53,22 +54,13 @@ class _ListAudiosState extends State<ListAudios> {
       ;
     });
   }
-  // void _fetchAudio() async {
-  //   if (await androidPermission(Permission.storage)) {
-  //     try {
-  //       ReceivePort receivePort = ReceivePort();
 
-  //       await Isolate.spawn(getAudios, receivePort.sendPort);
-  //       receivePort.listen((message) {
-  //         if (message is List)
-  //           setState(() {
-  //             _initilized = true;
-  //             _audioController.audios = message as List<FileSystemEntity>;
-  //           });
-  //       });
-  //     } catch (_) {}
-  //   } else {}
-  // }
+  @override
+  void dispose() {
+    _scrollController.removeListener(() {});
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +74,14 @@ class _ListAudiosState extends State<ListAudios> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchMediaLayout()));
+              },
               icon: Icon(
-                Iconsax.search_normal1,
+                Iconsax.search_normal,
                 color: Theme.of(context).iconTheme.color,
               )),
           IconButton(
