@@ -1,9 +1,18 @@
+import 'dart:io';
+
+import 'package:audiov/constants/constants.dart';
 import 'package:audiov/constants/themes.dart';
+
 import 'package:audiov/screens/audios/list_audios.dart';
-import 'package:audiov/screens/videos/a.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 void main() async {
+  Directory dir = Directory(location);
+  if (!dir.existsSync()) {
+    dir.createSync();
+  }
+  Hive.init(dir.path);
   runApp(MyApp());
 }
 

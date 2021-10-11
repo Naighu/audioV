@@ -68,7 +68,7 @@ class AudioThumbnail extends StatelessWidget {
                               audioController.playingAudio?.path ==
                                   audioFile.path,
                           child: Lottie.asset(
-                              "$animationDir/music_playing_light.json",
+                              "$animationDir/music_playing_dark.json",
                               height: 30,
                               width: 30,
                               repeat: true),

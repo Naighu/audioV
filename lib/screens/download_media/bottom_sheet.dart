@@ -1,9 +1,9 @@
 import 'package:audiov/constants/constants.dart';
 import 'package:audiov/controllers/search_media_controller.dart';
-import 'package:audiov/tools/human_readable_values.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
+
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import 'download_media_card.dart';
@@ -72,9 +72,10 @@ class _DownloadBottomSheetWigdetState extends State<DownloadBottomSheetWigdet> {
                         onDownload: () {
                           print("calling ");
                           Get.find<SearchMediaController>().downloadMedia(
-                              manifest.audioOnly.toList()[index],
-                              index,
-                              widget.video.title + ".mp3");
+                            manifest.audioOnly.toList()[index],
+                            index,
+                            widget.video.title + ".mp3",
+                          );
                         },
                         onStop: () {
                           Get.find<SearchMediaController>().stopDownloading();
@@ -99,9 +100,10 @@ class _DownloadBottomSheetWigdetState extends State<DownloadBottomSheetWigdet> {
                                 onDownload: () {
                                   Get.find<SearchMediaController>()
                                       .downloadMedia(
-                                          manifest.video.toList()[index],
-                                          index,
-                                          widget.video.title + ".mp4");
+                                    manifest.video.toList()[index],
+                                    index,
+                                    widget.video.title + ".mp4",
+                                  );
                                 },
                                 onStop: () {
                                   Get.find<SearchMediaController>()

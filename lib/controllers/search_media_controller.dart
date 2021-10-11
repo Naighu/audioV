@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audiov/constants/constants.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 enum SearchState { active, waiting, error }
@@ -65,7 +68,7 @@ class SearchMediaController extends GetxController {
   void downloadMedia(StreamInfo info, int index, String fileName) async {
     downloading = true;
     var stream = _yt.videos.streamsClient.get(info);
-    _file = File("/storage/emulated/0/" + fileName);
+    _file = File(location + fileName);
     _fileStream = _file?.openWrite();
 
     int totalBytes = info.size.totalBytes;
@@ -73,7 +76,6 @@ class SearchMediaController extends GetxController {
 
     _subscription = stream.listen((event) {});
     _subscription?.onData((bytes) {
-      print(progrssPercent);
       recivedBytes += bytes.length;
       progrssPercent = ((recivedBytes / totalBytes) * 100).toInt();
       update([index]);
@@ -81,7 +83,7 @@ class SearchMediaController extends GetxController {
     });
     _subscription?.onDone(() async {
       downloading = false;
-      print("Closed");
+
       await _fileStream?.flush();
       await _fileStream?.close();
     });

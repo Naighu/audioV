@@ -32,7 +32,7 @@ class AudioController extends GetxController implements AudioAbstract {
     if (data.thumbnail != null)
       audioBg = await getImagePalette(Image.memory(data.thumbnail!).image);
     else
-      audioBg = Colors.white;
+      audioBg = Color(0xFF222222);
     if (_playerType == PlayerType.none) _playerType = PlayerType.max;
     if (result == 1) {
       _audioState = AudioState.playing;

@@ -39,7 +39,7 @@ class AudioPlayerControls extends StatelessWidget {
                               alignment: Alignment.center,
                               child: Container(
                                 height: 3,
-                                color: Colors.grey,
+                                color: Colors.white30,
                               ),
                             ),
                             Align(
@@ -47,7 +47,7 @@ class AudioPlayerControls extends StatelessWidget {
                               child: Container(
                                 height: 3,
                                 width: pos,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                             ),
                             Positioned(
@@ -57,7 +57,7 @@ class AudioPlayerControls extends StatelessWidget {
                                 width: 12,
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             )
                           ],
@@ -67,10 +67,20 @@ class AudioPlayerControls extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(getHumanReadableDuration(duration)),
-                          Text(getHumanReadableDuration(Duration(
-                              milliseconds:
-                                  _audioController.playingAudio!.duration)))
+                          Text(
+                            getHumanReadableDuration(duration),
+                            style: TextStyle(
+                              color: Colors.white60,
+                            ),
+                          ),
+                          Text(
+                            getHumanReadableDuration(Duration(
+                                milliseconds:
+                                    _audioController.playingAudio!.duration)),
+                            style: TextStyle(
+                              color: Colors.white60,
+                            ),
+                          )
                         ],
                       )
                     ],
@@ -83,35 +93,44 @@ class AudioPlayerControls extends StatelessWidget {
             id: "music-player",
             builder: (AudioController audioController) {
               return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
                       onPressed: () {},
                       icon: Icon(Iconsax.previous,
-                          size: 40, color: Theme.of(context).iconTheme.color)),
+                          size: 32, color: Theme.of(context).iconTheme.color)),
                   const SizedBox(
                     width: defaultPadding,
                   ),
-                  IconButton(
-                      onPressed: () {
-                        if (audioController.audioState == AudioState.playing)
-                          audioController.pauseAudio();
-                        else
-                          audioController.resumeAudio();
-                      },
-                      icon: Icon(
-                          audioController.audioState == AudioState.playing
-                              ? Iconsax.pause
-                              : Iconsax.play,
-                          size: 40,
-                          color: Theme.of(context).iconTheme.color)),
+                  InkWell(
+                    onTap: () {
+                      if (audioController.audioState == AudioState.playing)
+                        audioController.pauseAudio();
+                      else
+                        audioController.resumeAudio();
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.all(5),
+                        height: 70,
+                        width: 70,
+                        decoration: BoxDecoration(
+                            color: audioController.audioBg,
+                            shape: BoxShape.circle),
+                        alignment: Alignment.center,
+                        child: Icon(
+                            audioController.audioState == AudioState.playing
+                                ? Iconsax.pause
+                                : Iconsax.play,
+                            size: 32,
+                            color: Theme.of(context).iconTheme.color)),
+                  ),
                   const SizedBox(
                     width: defaultPadding,
                   ),
                   IconButton(
                       onPressed: () {},
                       icon: Icon(Iconsax.next,
-                          size: 40, color: Theme.of(context).iconTheme.color)),
+                          size: 32, color: Theme.of(context).iconTheme.color)),
                 ],
               );
             })

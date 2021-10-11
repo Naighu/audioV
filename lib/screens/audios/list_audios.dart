@@ -87,7 +87,7 @@ class _ListAudiosState extends State<ListAudios> {
           IconButton(
               onPressed: () {},
               icon: Icon(
-                Iconsax.setting_2,
+                Iconsax.arrow_circle_down,
                 color: Theme.of(context).iconTheme.color,
               )),
         ],
