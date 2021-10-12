@@ -28,114 +28,113 @@ class AudioPlayerMini extends StatelessWidget {
             bool isLoading = AudioState.loading == audioController.audioState;
             return Padding(
               padding: EdgeInsets.only(top: Get.height * factor),
-              child: OpenContainer(
-                transitionType: ContainerTransitionType.fadeThrough,
-                openBuilder: (context, _) => AudioPlayerMax(
-                  currentDuartion: _currentDuration,
-                ),
-                closedBuilder: (context, callback) => Container(
-                  color: Color(0xFF161616),
-                  child: Stack(
-                    children: [
-                      ListTile(
-                        minLeadingWidth: 0,
-                        minVerticalPadding: 0,
-                        onTap: () {
-                          callback();
-                        },
-                        title: Row(
-                          children: [
-                            Hero(
-                              tag: "thumbnail",
-                              child: Container(
-                                width: 55,
-                                height: 55,
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    image: DecorationImage(
-                                        image: audioData.thumbnail != null
-                                            ? Image.memory(audioData.thumbnail!)
-                                                .image
-                                            : Image.asset(
-                                                "$audioDir/thumbnail.jpg",
-                                              ).image,
-                                        fit: BoxFit.cover)),
-                              ),
+              child: Container(
+                color: Color(0xFF161616),
+                child: Stack(
+                  children: [
+                    ListTile(
+                      minLeadingWidth: 0,
+                      minVerticalPadding: 0,
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (_) => AudioPlayerMax(
+                                  currentDuartion: _currentDuration,
+                                ));
+                      },
+                      title: Row(
+                        children: [
+                          Hero(
+                            tag: "thumbnail",
+                            child: Container(
+                              width: 55,
+                              height: 55,
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8)),
+                                  image: DecorationImage(
+                                      image: audioData.thumbnail != null
+                                          ? Image.memory(audioData.thumbnail!)
+                                              .image
+                                          : Image.asset(
+                                              "$audioDir/thumbnail.jpg",
+                                            ).image,
+                                      fit: BoxFit.cover)),
                             ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: Marquee(
-                                      text: audioData.trackName,
-                                      velocity: 20,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      blankSpace: 100,
-                                    ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Marquee(
+                                    text: audioData.trackName,
+                                    velocity: 20,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    blankSpace: 100,
                                   ),
-                                  Row(
-                                    children: [
-                                      StreamBuilder<Duration>(
-                                          stream: audioController
-                                              .onDurationChanged(),
-                                          builder: (context, snapshot) {
-                                            _currentDuration =
-                                                snapshot.data ?? Duration.zero;
-                                            return Text(
-                                                getHumanReadableDuration(
-                                                    snapshot.data ??
-                                                        Duration.zero),
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.white60));
-                                          }),
-                                      const SizedBox(width: 10),
-                                      Lottie.asset(
-                                          "$animationDir/music_playing_dark.json",
-                                          height: 30,
-                                          width: 30,
-                                          animate: audioController.audioState ==
-                                              AudioState.playing,
-                                          repeat: true),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                ),
+                                Row(
+                                  children: [
+                                    StreamBuilder<Duration>(
+                                        stream:
+                                            audioController.onDurationChanged(),
+                                        builder: (context, snapshot) {
+                                          _currentDuration =
+                                              snapshot.data ?? Duration.zero;
+                                          return Text(
+                                              getHumanReadableDuration(
+                                                  snapshot.data ??
+                                                      Duration.zero),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white60));
+                                        }),
+                                    const SizedBox(width: 10),
+                                    Lottie.asset(
+                                        "$animationDir/music_playing_dark.json",
+                                        height: 30,
+                                        width: 30,
+                                        animate: audioController.audioState ==
+                                            AudioState.playing,
+                                        repeat: true),
+                                  ],
+                                ),
+                              ],
                             ),
-                            isLoading
-                                ? CircularProgressIndicator()
-                                : IconButton(
-                                    onPressed: () {
-                                      if (isPlaying)
-                                        audioController.pauseAudio();
-                                      else
-                                        audioController.resumeAudio();
-                                    },
-                                    icon: Icon(
-                                      isPlaying ? Iconsax.pause : Iconsax.play,
-                                      color: Theme.of(context).iconTheme.color,
-                                    )),
-                            IconButton(
-                                onPressed: () {
-                                  audioController.stopAudio();
-                                },
-                                icon: Icon(
-                                  Iconsax.close_circle,
-                                  color: Theme.of(context).iconTheme.color,
-                                ))
-                          ],
-                        ),
+                          ),
+                          isLoading
+                              ? CircularProgressIndicator()
+                              : IconButton(
+                                  onPressed: () {
+                                    if (isPlaying)
+                                      audioController.pauseAudio();
+                                    else
+                                      audioController.resumeAudio();
+                                  },
+                                  icon: Icon(
+                                    isPlaying ? Iconsax.pause : Iconsax.play,
+                                    color: Theme.of(context).iconTheme.color,
+                                  )),
+                          IconButton(
+                              onPressed: () {
+                                audioController.stopAudio();
+                              },
+                              icon: Icon(
+                                Iconsax.close_circle,
+                                color: Theme.of(context).iconTheme.color,
+                              ))
+                        ],
                       ),
-                      Positioned(bottom: 0, child: PlayerMini()),
-                    ],
-                  ),
+                    ),
+                    Positioned(bottom: 0, child: PlayerMini()),
+                  ],
                 ),
               ),
             );
           }
+
           return Offstage();
         });
   }

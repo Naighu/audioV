@@ -1,10 +1,9 @@
-import 'package:audiov/abstracts/audio_abstract.dart';
 import 'package:audiov/constants/constants.dart';
 import 'package:audiov/controllers/audio_controller.dart';
 import 'package:audiov/tools/human_readable_values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
+import 'audio_controller_widget.dart';
 
 class AudioPlayerControls extends StatelessWidget {
   final Duration currentDuartion;
@@ -88,59 +87,7 @@ class AudioPlayerControls extends StatelessWidget {
             }),
 
         //controllers
-
-        GetBuilder<AudioController>(
-            id: "music-player",
-            builder: (AudioController audioController) {
-              bool isLoading = AudioState.loading == audioController.audioState;
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        audioController.playPrev();
-                      },
-                      icon: Icon(Iconsax.previous,
-                          size: 32, color: Theme.of(context).iconTheme.color)),
-                  const SizedBox(
-                    width: defaultPadding,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      if (audioController.audioState == AudioState.playing)
-                        audioController.pauseAudio();
-                      else
-                        audioController.resumeAudio();
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.all(5),
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                            color: audioController.audioBg,
-                            shape: BoxShape.circle),
-                        alignment: Alignment.center,
-                        child: isLoading
-                            ? CircularProgressIndicator()
-                            : Icon(
-                                audioController.audioState == AudioState.playing
-                                    ? Iconsax.pause
-                                    : Iconsax.play,
-                                size: 32,
-                                color: Theme.of(context).iconTheme.color)),
-                  ),
-                  const SizedBox(
-                    width: defaultPadding,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        audioController.playNext();
-                      },
-                      icon: Icon(Iconsax.next,
-                          size: 32, color: Theme.of(context).iconTheme.color)),
-                ],
-              );
-            })
+        AudioControllerWidget()
       ],
     );
   }

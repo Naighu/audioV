@@ -3,6 +3,8 @@ import 'package:audiov/controllers/audio_controller.dart';
 import 'package:audiov/models/audio_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 
 import 'player.dart';
@@ -17,6 +19,7 @@ class AudioPlayerMax extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(top: defaultPadding),
       decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter, end: Alignment.bottomCenter,
@@ -28,13 +31,26 @@ class AudioPlayerMax extends StatelessWidget {
             elevation: 0.0,
             automaticallyImplyLeading: false,
             centerTitle: true,
-            title: IconButton(
-                onPressed: () {
+            title: InkWell(
+                onTap: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  color: Theme.of(context).iconTheme.color,
+                child: Stack(
+                  children: [
+                    Icon(
+                      Iconsax.arrow_down_14,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Icon(
+                        Iconsax.arrow_down_14,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                  ],
                 ))),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
@@ -50,10 +66,9 @@ class AudioPlayerMax extends StatelessWidget {
                     ConstrainedBox(
                       constraints: BoxConstraints(
                           maxWidth: Get.width - defaultPadding * 2,
-                          maxHeight: 60),
+                          maxHeight: 30),
                       child: Marquee(
                         text: audio.trackName,
-                        startAfter: const Duration(seconds: 2),
                         blankSpace: 100,
                         style: TextStyle(
                             fontSize: 28, fontWeight: FontWeight.bold),
@@ -62,21 +77,20 @@ class AudioPlayerMax extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: defaultPadding),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 16,
-                        child: Hero(
-                          tag: "thumbnail",
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: audio.thumbnail == null
-                                      ? Image.asset("$audioDir/thumbnail.jpg")
-                                          .image
-                                      : Image.memory(audio.thumbnail!).image,
-                                  fit: BoxFit.cover),
-                              borderRadius: const BorderRadius.all(
-                                  Radius.circular(radius)),
-                            ),
+                      child: Hero(
+                        tag: "thumbnail",
+                        child: Container(
+                          height: 200,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: audio.thumbnail == null
+                                    ? Image.asset("$audioDir/thumbnail.jpg")
+                                        .image
+                                    : Image.memory(audio.thumbnail!).image,
+                                fit: BoxFit.cover),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(radius)),
                           ),
                         ),
                       ),
