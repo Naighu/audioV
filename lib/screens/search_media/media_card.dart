@@ -1,3 +1,4 @@
+import 'package:audiov/constants/constants.dart';
 import 'package:audiov/controllers/search_media_controller.dart';
 import 'package:audiov/screens/download_media/bottom_sheet.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,13 @@ class MediaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
         height: 120.0,
-        child: ListTile(
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            color: Color(0xFF161616)),
+        child: InkWell(
           onTap: () {
             //Get.find<SearchMediaController>().getVideo(video);
             showModalBottomSheet(
@@ -22,20 +27,44 @@ class MediaCard extends StatelessWidget {
                 useRootNavigator: true,
                 builder: (context) => DownloadBottomSheetWigdet(video: video));
           },
-          leading: Image.network(
-            video.thumbnails.standardResUrl,
-            errorBuilder: (context, _, __) {
-              return Image.asset("assets/audio/thumbnail.jpg");
-            },
-          ),
-          title: SizedBox(
-              height: 40,
-              child: Text(video.title,
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 6.0),
-            child: Text(
-                "${video.author} • ${NumberFormat.compact().format(video.engagement.viewCount)} views"),
+          child: Row(
+            children: [
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(),
+                  child: Image.network(video.thumbnails.standardResUrl,
+                      errorBuilder: (context, _, __) {
+                    print("Error");
+                    return Image.asset(
+                      "assets/audio/thumbnail.jpg",
+                    );
+                  }, fit: BoxFit.cover),
+                ),
+              ),
+              const SizedBox(width: defaultPadding),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 50,
+                      child: Text(video.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    Text(
+                      "${video.author} • ${NumberFormat.compact().format(video.engagement.viewCount)} views",
+                      style: TextStyle(color: Colors.white60),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ));
   }

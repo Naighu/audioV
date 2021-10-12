@@ -109,7 +109,9 @@ class _ListAudiosState extends State<ListAudios> {
                         },
                       );
                     }),
-                AudioPlayerMini()
+                AudioPlayerMini(
+                  factor: 0.667,
+                )
               ],
             )
           : _loading(),
@@ -122,13 +124,8 @@ class _ListAudiosState extends State<ListAudios> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Lottie.asset(
-                Get.isDarkMode
-                    ? "$animationDir/audio_loading_dark.json"
-                    : "$animationDir/audio_loading.json",
-                height: 130,
-                width: 130,
-                repeat: true),
+            Lottie.asset("$animationDir/audio_loading_dark.json",
+                height: 130, width: 130, repeat: true),
             Text("Please wait a moment ",
                 style: Theme.of(context).textTheme.subtitle1),
           ],

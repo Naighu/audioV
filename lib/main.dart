@@ -7,6 +7,8 @@ import 'package:audiov/screens/audios/list_audios.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import 'audio_player/audio_player_mini.dart';
+
 void main() async {
   Directory dir = Directory(location);
   if (!dir.existsSync()) {

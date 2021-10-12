@@ -12,7 +12,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 
 class AudioPlayerMini extends StatelessWidget {
-  const AudioPlayerMini({Key? key}) : super(key: key);
+  final double factor;
+  const AudioPlayerMini({Key? key, required this.factor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class AudioPlayerMini extends StatelessWidget {
                 audioData.path == audioController.playingAudio!.path;
 
             return Padding(
-              padding: EdgeInsets.only(top: Get.height * 0.677),
+              padding: EdgeInsets.only(top: Get.height * factor),
               child: OpenContainer(
                 transitionType: ContainerTransitionType.fadeThrough,
                 openBuilder: (context, _) => AudioPlayerMax(
