@@ -24,9 +24,8 @@ class AudioPlayerMini extends StatelessWidget {
         builder: (AudioController audioController) {
           if (audioController.playingAudio != null) {
             AudioData audioData = audioController.playingAudio!;
-            bool isPlaying = AudioState.playing == audioController.audioState &&
-                audioData.path == audioController.playingAudio!.path;
-
+            bool isPlaying = AudioState.playing == audioController.audioState;
+            bool isLoading = AudioState.loading == audioController.audioState;
             return Padding(
               padding: EdgeInsets.only(top: Get.height * factor),
               child: OpenContainer(
@@ -66,21 +65,59 @@ class AudioPlayerMini extends StatelessWidget {
                             ),
                             const SizedBox(width: 14),
                             Expanded(
-                              child: Marquee(
-                                text: audioData.trackName,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Marquee(
+                                      text: audioData.trackName,
+                                      velocity: 20,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      blankSpace: 100,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      StreamBuilder<Duration>(
+                                          stream: audioController
+                                              .onDurationChanged(),
+                                          builder: (context, snapshot) {
+                                            _currentDuration =
+                                                snapshot.data ?? Duration.zero;
+                                            return Text(
+                                                getHumanReadableDuration(
+                                                    snapshot.data ??
+                                                        Duration.zero),
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white60));
+                                          }),
+                                      const SizedBox(width: 10),
+                                      Lottie.asset(
+                                          "$animationDir/music_playing_dark.json",
+                                          height: 30,
+                                          width: 30,
+                                          animate: audioController.audioState ==
+                                              AudioState.playing,
+                                          repeat: true),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            IconButton(
-                                onPressed: () {
-                                  if (isPlaying)
-                                    audioController.pauseAudio();
-                                  else
-                                    audioController.resumeAudio();
-                                },
-                                icon: Icon(
-                                  isPlaying ? Iconsax.pause : Iconsax.play,
-                                  color: Theme.of(context).iconTheme.color,
-                                )),
+                            isLoading
+                                ? CircularProgressIndicator()
+                                : IconButton(
+                                    onPressed: () {
+                                      if (isPlaying)
+                                        audioController.pauseAudio();
+                                      else
+                                        audioController.resumeAudio();
+                                    },
+                                    icon: Icon(
+                                      isPlaying ? Iconsax.pause : Iconsax.play,
+                                      color: Theme.of(context).iconTheme.color,
+                                    )),
                             IconButton(
                                 onPressed: () {
                                   audioController.stopAudio();
@@ -89,26 +126,6 @@ class AudioPlayerMini extends StatelessWidget {
                                   Iconsax.close_circle,
                                   color: Theme.of(context).iconTheme.color,
                                 ))
-                          ],
-                        ),
-                        subtitle: Row(
-                          children: [
-                            StreamBuilder<Duration>(
-                                stream: audioController.onDurationChanged(),
-                                builder: (context, snapshot) {
-                                  _currentDuration =
-                                      snapshot.data ?? Duration.zero;
-                                  return Text(getHumanReadableDuration(
-                                      snapshot.data ?? Duration.zero));
-                                }),
-                            const SizedBox(width: 10),
-                            Lottie.asset(
-                                "$animationDir/music_playing_dark.json",
-                                height: 30,
-                                width: 30,
-                                animate: audioController.audioState ==
-                                    AudioState.playing,
-                                repeat: true),
                           ],
                         ),
                       ),

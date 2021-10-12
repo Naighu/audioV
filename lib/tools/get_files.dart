@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audiov/models/audio_data.dart';
+import 'package:audiov/tools/get_metadata.dart';
+
 // void getAudios(SendPort port) async {
 //   List _songs = [];
 //   bool isCacheAvailable = false, dataChanged = true;
@@ -73,7 +76,7 @@ import 'dart:io';
 
 class MediaFiles {
   late StreamSubscription<FileSystemEntity> subscription;
-  late StreamController<List<FileSystemEntity>> controller;
+  late StreamController<List<AudioData>> controller;
   int limit;
   List<String> extensions;
   MediaFiles(this.limit, this.extensions) {
@@ -81,24 +84,25 @@ class MediaFiles {
   }
 
   void init() {
-    controller = StreamController();
+    controller = StreamController.broadcast();
     subscription = Directory("/storage/emulated/0/")
         .list(recursive: true, followLinks: false)
         .listen((event) {});
   }
 
   void fetchAudio() {
-    List<FileSystemEntity> _audios = [];
+    List<AudioData> _audios = [];
     subscription.resume();
     int i = 0;
     subscription.onData(
-      (data) {
+      (data) async {
         if (i < limit) {
           String path = data.path;
           if (_checkForFiles(path) &&
               !path.startsWith("/storage/emulated/0/Android")) {
             ;
-            _audios.add(data);
+
+            _audios.add(await getMetaData(File(data.path)));
             i++;
           }
         } else {

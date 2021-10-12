@@ -92,11 +92,14 @@ class AudioPlayerControls extends StatelessWidget {
         GetBuilder<AudioController>(
             id: "music-player",
             builder: (AudioController audioController) {
+              bool isLoading = AudioState.loading == audioController.audioState;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        audioController.playPrev();
+                      },
                       icon: Icon(Iconsax.previous,
                           size: 32, color: Theme.of(context).iconTheme.color)),
                   const SizedBox(
@@ -117,18 +120,22 @@ class AudioPlayerControls extends StatelessWidget {
                             color: audioController.audioBg,
                             shape: BoxShape.circle),
                         alignment: Alignment.center,
-                        child: Icon(
-                            audioController.audioState == AudioState.playing
-                                ? Iconsax.pause
-                                : Iconsax.play,
-                            size: 32,
-                            color: Theme.of(context).iconTheme.color)),
+                        child: isLoading
+                            ? CircularProgressIndicator()
+                            : Icon(
+                                audioController.audioState == AudioState.playing
+                                    ? Iconsax.pause
+                                    : Iconsax.play,
+                                size: 32,
+                                color: Theme.of(context).iconTheme.color)),
                   ),
                   const SizedBox(
                     width: defaultPadding,
                   ),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        audioController.playNext();
+                      },
                       icon: Icon(Iconsax.next,
                           size: 32, color: Theme.of(context).iconTheme.color)),
                 ],

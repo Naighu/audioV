@@ -53,6 +53,8 @@ class AudioPlayerMax extends StatelessWidget {
                           maxHeight: 60),
                       child: Marquee(
                         text: audio.trackName,
+                        startAfter: const Duration(seconds: 2),
+                        blankSpace: 100,
                         style: TextStyle(
                             fontSize: 28, fontWeight: FontWeight.bold),
                       ),

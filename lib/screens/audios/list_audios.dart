@@ -1,5 +1,6 @@
 import 'package:audiov/audio_player/audio_player_mini.dart';
 import 'package:audiov/constants/constants.dart';
+import 'package:audiov/models/audio_data.dart';
 import 'package:audiov/screens/search_media/search_media_layout.dart';
 import 'package:audiov/tools/get_files.dart';
 import 'package:audiov/tools/permissions.dart';
@@ -33,7 +34,7 @@ class _ListAudiosState extends State<ListAudios> {
     super.initState();
     debugPrint("fetching");
     _scrollController = ScrollController();
-    Get.put(AudioController());
+    Get.put(AudioController(audioFiles));
 
     _listenScroll();
     androidPermission(Permission.storage).then((value) {
@@ -95,7 +96,7 @@ class _ListAudiosState extends State<ListAudios> {
       body: _initilized
           ? Stack(
               children: [
-                StreamBuilder<List<FileSystemEntity>>(
+                StreamBuilder<List<AudioData>>(
                     stream: audioFiles.controller.stream,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return _loading();
@@ -105,7 +106,7 @@ class _ListAudiosState extends State<ListAudios> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (_, index) {
                           return AudioThumbnail(
-                              audioFile: snapshot.data![index]);
+                              index: index, audioFile: snapshot.data![index]);
                         },
                       );
                     }),
